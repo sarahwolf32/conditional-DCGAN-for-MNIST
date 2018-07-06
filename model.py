@@ -2,81 +2,97 @@ import numpy as np
 import tensorflow as tf
 from architecture import Architecture
 
+GENERATOR_SCOPE = 'generator'
+DISCRIMINATOR_SCOPE = 'discriminator'
+
 def generator(z, y, architecture, initializer):
 
     # z: a random input tensor of size [M, 1, 1, 100]
     # y: a one-hot label of size [M, 1, 1, 10]
     # architecture: a list of dictionaries that specify the config for each layer
 
-    # concatenate -> [M, 1, 1, 110]
-    layer = tf.concat([z, y], axis=3)
+    with tf.variable_scope(GENERATOR_SCOPE):
 
-    depth = len(architecture)
-    for i in range(depth):
+        # concatenate -> [M, 1, 1, 110]
+        layer = tf.concat([z, y], axis=3)
 
-        layer_config = architecture[i]
-        is_output = ((i + 1) == depth)
+        depth = len(architecture)
+        for i in range(depth):
 
-        conv2d = tf.layers.conv2d_transpose(
-            layer, 
-            filters = layer_config['filters'], 
-            kernel_size = layer_config['kernel_size'], 
-            strides = layer_config['strides'], 
-            padding = layer_config['padding'],
-            activation = tf.nn.tanh if is_output else None,
-            kernel_initializer = initializer, 
-            name = 'layer_' + str(i))
+            layer_config = architecture[i]
+            is_output = ((i + 1) == depth)
 
-        if is_output:
-            layer = conv2d
-        else:
-            norm = tf.layers.batch_normalization(conv2d)
-            lrelu = tf.nn.leaky_relu(norm)
-            layer = lrelu
-        
-    output = tf.identity(layer, name='generated_images')
-    return output # [M, 32, 32, 1]
+            conv2d = tf.layers.conv2d_transpose(
+                layer, 
+                filters = layer_config['filters'], 
+                kernel_size = layer_config['kernel_size'], 
+                strides = layer_config['strides'], 
+                padding = layer_config['padding'],
+                activation = tf.nn.tanh if is_output else None,
+                kernel_initializer = initializer, 
+                name = 'layer_' + str(i))
 
-def discriminator(x, y, architecture, initializer):
+            if is_output:
+                layer = conv2d
+            else:
+                norm = tf.layers.batch_normalization(conv2d)
+                lrelu = tf.nn.leaky_relu(norm)
+                layer = lrelu
+            
+        # [M, img_size, img_size, img_channels]
+        output = tf.identity(layer, name='generated_images')
+        return output 
 
-    # x: an image tensor of shape [M, 32, 32, 1]
+def discriminator(x, y, architecture, initializer, reuse=False):
+
+    # x: an image tensor of shape [M, img_size, img_size, img_channels]
     # y: a one-hot label of size [M, 1, 1, 10]
     # architecture: a list of dictionaries that specify the config for each layer
 
-    # concatenate -> [M, 32, 32, 11]
-    y_expand = y * np.ones([x.shape[0], x.shape[1], x.shape[2], 10])
-    layer = tf.concat([x, y_expand], axis=3)
+    with tf.variable_scope(DISCRIMINATOR_SCOPE, reuse=reuse):
 
-    depth = len(architecture)
-    for i in range(depth):
+        # concatenate -> [M, img_size, img_size, 11]
+        y_expand = y * np.ones([x.shape[0], x.shape[1], x.shape[2], 10])
+        layer = tf.concat([x, y_expand], axis=3)
 
-        layer_config = architecture[i]
-        is_input = (i == 0)
-        is_output = ((i + 1) == depth)
+        depth = len(architecture)
+        for i in range(depth):
 
-        conv = tf.layers.conv2d(
-            layer, 
-            filters = layer_config['filters'], 
-            kernel_size = layer_config['kernel_size'], 
-            strides = layer_config['strides'], 
-            padding = layer_config['padding'], 
-            activation=tf.nn.leaky_relu if is_input else None,
-            kernel_initializer=initializer, 
-            name='layer_' + str(i))
-        
-        if is_input:
-            layer = conv
-        elif is_output:
-            layer = tf.nn.sigmoid(conv)
-        else:
-            norm = tf.layers.batch_normalization(conv)
-            layer = tf.nn.leaky_relu(norm)
+            layer_config = architecture[i]
+            is_input = (i == 0)
+            is_output = ((i + 1) == depth)
 
-        output = tf.reshape(layer, [-1, 1])
-        return output # [M, 1]
+            conv = tf.layers.conv2d(
+                layer, 
+                filters = layer_config['filters'], 
+                kernel_size = layer_config['kernel_size'], 
+                strides = layer_config['strides'], 
+                padding = layer_config['padding'], 
+                activation=tf.nn.leaky_relu if is_input else None,
+                kernel_initializer=initializer, 
+                name='layer_' + str(i))
+            
+            if is_input:
+                layer = conv
+            elif is_output:
+                layer = tf.nn.sigmoid(conv)
+            else:
+                norm = tf.layers.batch_normalization(conv)
+                layer = tf.nn.leaky_relu(norm)
 
+            output = tf.reshape(layer, [-1, 1])
+            return output # [M, 1]
 
-
+# loss
+def loss(Dx, Dg):
+    '''
+    Dx = Probabilities assigned by D to the real images, [M, 1]
+    Dg = Probabilities assigned by D to the generated images, [M, 1]
+    '''
+    with tf.variable_scope('loss'):
+        loss_d = tf.identity(-tf.reduce_mean(tf.log(Dx) + tf.log(1. - Dg)), name='loss_d')
+        loss_g = tf.identity(-tf.reduce_mean(tf.log(Dg)), name='loss_g')
+        return loss_d, loss_g
 
 
 
