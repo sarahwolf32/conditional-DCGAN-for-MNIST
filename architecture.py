@@ -1,9 +1,6 @@
 
 class Architecture:
 
-    # Image size
-    img_size = [32, 32, 1]
-
     # Generator layer config
     layers_g = [
         {
