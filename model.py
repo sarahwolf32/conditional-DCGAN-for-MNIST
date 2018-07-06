@@ -41,17 +41,16 @@ class Model:
             output = tf.identity(layer, name='generated_images')
             return output 
 
-    def discriminator(self, x, y, initializer, reuse=False):
+    def discriminator(self, x, y_expanded, initializer, reuse=False):
 
         # x: an image tensor of shape [M, img_size, img_size, img_channels]
-        # y: a one-hot label of size [M, 1, 1, 10]
+        # y: a one-hot tensor expanded to size [M, img_size, img_size, 10]
         # architecture: a list of dictionaries that specify the config for each layer
 
         with tf.variable_scope('discriminator', reuse=reuse):
 
             # concatenate -> [M, img_size, img_size, 11]
-            y_expand = y * np.ones([x.shape[0], x.shape[1], x.shape[2], 10])
-            layer = tf.concat([x, y_expand], axis=3)
+            layer = tf.concat([x, y_expanded], axis=3)
 
             depth = len(Architecture.layers_d)
             for i in range(depth):
@@ -78,8 +77,8 @@ class Model:
                     norm = tf.layers.batch_normalization(conv)
                     layer = tf.nn.leaky_relu(norm)
 
-                output = tf.reshape(layer, [-1, 1])
-                return output # [M, 1]
+            output = tf.reshape(layer, [-1, 1])
+            return output # [M, 1]
 
     # loss
     def loss(self, Dx, Dg):
@@ -97,20 +96,23 @@ class Model:
 
         # placeholders for training data
         images_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 1], name='images_holder')
-        labels_holder = y_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 10], name='labels_holder')
+        labels_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 10], name='labels_holder')
 
         # placeholders for random generator input
         z_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 100], name='z_holder')
         y_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 10], name='y_holder')
+        y_expanded_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 10], name='y_expanded_holder')
 
         # forward pass
         weights_init = tf.truncated_normal_initializer(stddev=0.02)
-        generated_images = generator(z_holder, y_holder, weights_init)
-        Dx = discriminator(images_holder, labels_holder, weights_init, False)
-        Dg = discriminator(generated_images, y_holder, weights_init, True)
+        generated_images = self.generator(z_holder, y_holder, weights_init)
+        Dx = self.discriminator(images_holder, labels_holder, weights_init, False)
+        Dx = tf.identity(Dx, name="Dx")
+        Dg = self.discriminator(generated_images, y_expanded_holder, weights_init, True)
+        Dg = tf.identity(Dg, name="Dg")
 
         # compute losses
-        loss_d, loss_g = loss(Dx, Dg)
+        loss_d, loss_g = self.loss(Dx, Dg)
 
         # optimizers
         optimizer_g = tf.train.AdamOptimizer(learning_rate=0.0002, beta1=0.5)
@@ -122,7 +124,7 @@ class Model:
         train_g = optimizer_g.minimize(loss_g, var_list=g_vars, name='train_g')
         train_d = optimizer_d.minimize(loss_d, var_list = d_vars, name='train_d')
 
-        return train_d, train_g, loss_d, loss_g, generated_images
+        return train_d, train_g, loss_d, loss_g, generated_images, Dx, Dg
 
 
 

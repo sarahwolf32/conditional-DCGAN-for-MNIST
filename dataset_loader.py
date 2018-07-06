@@ -8,14 +8,17 @@ class DatasetLoader:
     def load_dataset(self, config):
         images, labels = self._load_data(config)
 
-        one_hot_labels = tf.one_hot(labels, 10)
+        one_hot_labels = np.eye(10)[labels]
+        one_hot_labels = np.reshape(one_hot_labels, [images.shape[0], 1, 1, 10])
+        expanded_labels = one_hot_labels * np.ones([images.shape[0], 32, 32, 10])
+        labels = tf.constant(expanded_labels)
 
         batch_size = config.batch_size
         num_batches = int(np.ceil(images.shape[0] / float(batch_size)))
 
         X = self._data_tensor(images)
-        dataset = tf.data.Dataset.from_tensor_slices((X, one_hot_labels))
-        dataset = dataset.shuffle(1000)
+        dataset = tf.data.Dataset.from_tensor_slices((X, labels))
+        #dataset = dataset.shuffle(1000)
         dataset = dataset.batch(batch_size)
         return dataset, num_batches
 
@@ -28,7 +31,10 @@ class DatasetLoader:
         mnist = np.load(f)  
 
         # Return numpy arrays of shapes (M, 28, 28), (M,)
-        x_train, y_train = mnist['x_train'], mnist['y_train']
+        M = 10000
+        x_train = mnist['x_train']
+        x_train, y_train = mnist['x_train'][:M, :, :], mnist['y_train'][:M]
+    
         return x_train, y_train
 
 

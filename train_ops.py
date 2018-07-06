@@ -11,4 +11,6 @@ class TrainOps:
         self.global_step_var = graph.get_tensor_by_name('global_step:0')
         self.batch_var = graph.get_tensor_by_name('batch:0')
         self.epoch_var = graph.get_tensor_by_name('epoch:0')
-        self.summary_op = graph.get_tensor_by_name('Merge/MergeSummary:0')    
+        self.summary_op = graph.get_tensor_by_name('Merge/MergeSummary:0')  
+        self.dx = graph.get_tensor_by_name('Dx:0')  
+        self.dg = graph.get_tensor_by_name('Dg:0')
