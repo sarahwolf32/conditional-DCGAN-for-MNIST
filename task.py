@@ -5,6 +5,7 @@ from train_ops import TrainOps
 from train_config import TrainConfig
 from dataset_loader import DatasetLoader
 from random import randint
+import os
 
 def create_training_ops():
 
@@ -24,8 +25,6 @@ def create_training_ops():
     summary_op = tf.summary.merge_all()
 
 def random_codes(M):
-    ''' random one-hot labels of size [M, 32, 32, 10]'''
-    ''' random codes of size [M, 1, 1, 100]'''
     labels = [randint(0, 9) for i in range(M)]
     one_hot_labels = np.eye(10)[labels]
     y = np.reshape(one_hot_labels, [-1, 1, 1, 10])
@@ -37,6 +36,13 @@ def increment(variable, sess):
     sess.run(tf.assign_add(variable, 1))
     new_val = sess.run(variable)
     return new_val
+
+def checkpoint_model(checkpoint_dir, session, step, saver):
+    if not os.path.exists(checkpoint_dir):
+        os.makedirs(checkpoint_dir)
+    model_name = checkpoint_dir + '/model-' + str(step) + '.cptk'
+    saver.save(session, model_name, global_step=step)
+    print("saved checkpoint!")
 
 def train(sess, ops, config):
     writer = tf.summary.FileWriter(config.summary_dir, graph=tf.get_default_graph())
@@ -86,10 +92,9 @@ def train(sess, ops, config):
                 print("D loss: " + str(loss_d_val))
 
             # saving
-            '''
+
             if global_step % config.checkpoint_freq == 0:
-                save_model(config.checkpoint_dir, sess, global_step, saver)
-            '''
+                checkpoint_model(config.checkpoint_dir, sess, global_step, saver)
 
             global_step = increment(ops.global_step_var, sess)
             batch = increment(ops.batch_var, sess)
