@@ -4,15 +4,12 @@ from architecture import Architecture
 
 class Model:
 
-    GENERATOR_SCOPE = 'generator'
-    DISCRIMINATOR_SCOPE = 'discriminator'
-
-    def generator(z, y, initializer):
+    def generator(self, z, y, initializer):
 
         # z: a random input tensor of size [M, 1, 1, 100]
         # y: a one-hot label of size [M, 1, 1, 10]
 
-        with tf.variable_scope(GENERATOR_SCOPE):
+        with tf.variable_scope('generator'):
 
             # concatenate -> [M, 1, 1, 110]
             layer = tf.concat([z, y], axis=3)
@@ -44,13 +41,13 @@ class Model:
             output = tf.identity(layer, name='generated_images')
             return output 
 
-    def discriminator(x, y, initializer, reuse=False):
+    def discriminator(self, x, y, initializer, reuse=False):
 
         # x: an image tensor of shape [M, img_size, img_size, img_channels]
         # y: a one-hot label of size [M, 1, 1, 10]
         # architecture: a list of dictionaries that specify the config for each layer
 
-        with tf.variable_scope(DISCRIMINATOR_SCOPE, reuse=reuse):
+        with tf.variable_scope('discriminator', reuse=reuse):
 
             # concatenate -> [M, img_size, img_size, 11]
             y_expand = y * np.ones([x.shape[0], x.shape[1], x.shape[2], 10])
@@ -85,7 +82,7 @@ class Model:
                 return output # [M, 1]
 
     # loss
-    def loss(Dx, Dg):
+    def loss(self, Dx, Dg):
         '''
         Dx = Probabilities assigned by D to the real images, [M, 1]
         Dg = Probabilities assigned by D to the generated images, [M, 1]
@@ -96,7 +93,7 @@ class Model:
             return loss_d, loss_g
 
     # Train
-    def trainers():
+    def trainers(self):
 
         # placeholders for training data
         images_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 1], name='images_holder')
@@ -120,8 +117,8 @@ class Model:
         optimizer_d = tf.train.AdamOptimizer(learning_rate=0.0002, beta1=0.5)
 
         # backprop
-        g_vars = tf.trainable_variables(scope=GENERATOR_SCOPE)
-        d_vars = tf.trainable_variables(scope=DISCRIMINATOR_SCOPE)
+        g_vars = tf.trainable_variables(scope='generator')
+        d_vars = tf.trainable_variables(scope='discriminator')
         train_g = optimizer_g.minimize(loss_g, var_list=g_vars, name='train_g')
         train_d = optimizer_d.minimize(loss_d, var_list = d_vars, name='train_d')
 
