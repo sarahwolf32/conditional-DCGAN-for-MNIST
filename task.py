@@ -49,7 +49,8 @@ def train(sess, ops, config):
     saver = tf.train.Saver()
 
     # prepare data
-    dataset, num_batches = DatasetLoader().load_dataset(config)
+    loader = DatasetLoader()
+    dataset, num_batches = loader.load_dataset(config)
     iterator = dataset.make_initializable_iterator()
     next_batch = iterator.get_next()
 
@@ -65,7 +66,8 @@ def train(sess, ops, config):
         # loop over batches
         while batch < num_batches:
 
-            images, expanded_labels = sess.run(next_batch)
+            images, labels = sess.run(next_batch)
+            expanded_labels = loader.expand_labels(labels)
             M = images.shape[0]
             y, y_expanded, z = random_codes(M)
 
