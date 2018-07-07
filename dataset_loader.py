@@ -17,13 +17,6 @@ class DatasetLoader:
         dataset = dataset.batch(batch_size)
         return dataset, num_batches
 
-    def expand_labels(self, labels):
-        one_hot_labels = np.eye(10)[labels]
-        one_hot_labels = np.reshape(one_hot_labels, [-1, 1, 1, 10])
-        M = one_hot_labels.shape[0]
-        expanded_labels = one_hot_labels * np.ones([M, 32, 32, 10])
-        return expanded_labels
-
     ### Private ###
 
     def _load_data(self, config):
@@ -33,9 +26,7 @@ class DatasetLoader:
         mnist = np.load(f)  
 
         # Return numpy arrays of shapes (M, 28, 28), (M,)
-        x_train = mnist['x_train']
         x_train, y_train = mnist['x_train'], mnist['y_train']
-    
         return x_train, y_train
 
 

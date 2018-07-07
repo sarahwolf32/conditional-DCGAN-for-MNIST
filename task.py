@@ -24,12 +24,17 @@ def create_training_ops():
     images_summary_op = tf.summary.image('Generated_Image', generated_images, max_outputs=1)
     summary_op = tf.summary.merge_all()
 
-def random_codes(M):
-    labels = [randint(0, 9) for i in range(M)]
+def expand_labels(labels):
     one_hot_labels = np.eye(10)[labels]
-    y = np.reshape(one_hot_labels, [-1, 1, 1, 10])
-    y_expanded = y * np.ones([M, 32, 32, 10])
+    one_hot_labels = np.reshape(one_hot_labels, [-1, 1, 1, 10])
+    M = one_hot_labels.shape[0]
+    expanded_labels = one_hot_labels * np.ones([M, 32, 32, 10])
+    return (one_hot_labels, expanded_labels)
+
+def random_codes(M):
     z = np.random.normal(0.0, 1.0, size=[M, 1, 1, 100])
+    labels = [randint(0, 9) for i in range(M)]
+    y, y_expanded = expand_labels(labels)
     return y, y_expanded, z
 
 def increment(variable, sess):
@@ -67,7 +72,7 @@ def train(sess, ops, config):
         while batch < num_batches:
 
             images, labels = sess.run(next_batch)
-            expanded_labels = loader.expand_labels(labels)
+            _, expanded_labels = expand_labels(labels)
             M = images.shape[0]
             y, y_expanded, z = random_codes(M)
 
