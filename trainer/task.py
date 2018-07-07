@@ -6,6 +6,8 @@ from train_config import TrainConfig
 from dataset_loader import DatasetLoader
 from random import randint
 import os
+from StringIO import StringIO
+from tensorflow.python.lib.io import file_io
 
 def create_training_ops():
 
@@ -56,8 +58,8 @@ def checkpoint_model(checkpoint_dir, session, step, saver):
     saver.save(session, model_name, global_step=step)
     print("saved checkpoint!")
 
-def sample_category(sess, ops, config, category, num_samples):
-
+def sample_category(sess, ops, config, category, num_samples, sub_dir):
+    
     # prepare for calling generator
     labels = [category] * num_samples
     one_hot_labels = one_hot(labels)
@@ -76,16 +78,19 @@ def sample_category(sess, ops, config, category, num_samples):
     for i in range(images.shape[0]):
         image = images[i]
         img_tensor = tf.image.encode_png(image)
-        img_name = config.sample_dir + '/' + str(category) + '_sample_' + str(i) + '.png'
-        output_file = open(img_name, 'wb+')
+        folder = config.sample_dir + '/' + sub_dir + '/' + str(category)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        img_name = folder + '/' + 'sample_' + str(i) + '.png'
         output_data = sess.run(img_tensor)
-        output_file.write(output_data)
-        output_file.close()
+        with file_io.FileIO(img_name, 'w+') as f:
+            f.write(output_data)
+            f.close
 
-def sample_all_categories(sess, ops, config, num_samples):
+def sample_all_categories(sess, ops, config, num_samples, sub_dir):
     categories = [i for i in range(10)]
     for category in categories:
-        sample_category(sess, ops, config, category, num_samples)
+        sample_category(sess, ops, config, category, num_samples, sub_dir)
 
 def train(sess, ops, config):
     writer = tf.summary.FileWriter(config.summary_dir, graph=tf.get_default_graph())
@@ -106,7 +111,7 @@ def train(sess, ops, config):
     while epoch < config.num_epochs:
 
         # draw samples
-        sample_all_categories(sess, ops, config, 5)
+        sample_all_categories(sess, ops, config, 5, 'epoch_' + str(epoch))
 
         sess.run(iterator.initializer)
 
@@ -164,8 +169,8 @@ def begin_training(config):
     train(sess, ops, config)
 
 
-# Test
+# Run
 if __name__ == '__main__':
-    config = TrainConfig(local=True)
+    config = TrainConfig(local=False)
     begin_training(config)
 

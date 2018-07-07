@@ -8,7 +8,7 @@ class TrainConfig:
             self.NUM_EPOCHS = 13
             self.BATCH_SIZE = 128
             self.LOG_FREQ = 1
-            self.CHECKPOINT_FREQ = 5
+            self.CHECKPOINT_FREQ = 25
 
             if local:
                 self.DATA_DIR = '/Users/sarahwolf/.keras/datasets/mnist.npz'
@@ -17,9 +17,9 @@ class TrainConfig:
                 self.SAMPLE_DIR = 'samples'
             else:
                 self.DATA_DIR = 'gs://gan-training-207705_bucket2/mnist.npz'
-                self.SUMMARY_DIR = 'gs://gan-training-207705_bucket2/output3/summary'
-                self.CHECKPOINT_DIR = 'gs://gan-training-207705_bucket2/output3/checkpoints'
-                self.SAMPLE_DIR = 'gs://gan-training-207705_bucket2/output3/samples'
+                self.SUMMARY_DIR = 'gs://gan-training-207705_bucket2/cDCGAN-1/summary'
+                self.CHECKPOINT_DIR = 'gs://gan-training-207705_bucket2/cDCGAN-1/checkpoints'
+                self.SAMPLE_DIR = 'gs://gan-training-207705_bucket2/cDCGAN-1/samples'
 
     def __init__(self, local=True):
         args = self._add_arguments()
