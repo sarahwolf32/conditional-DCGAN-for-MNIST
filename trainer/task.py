@@ -106,7 +106,7 @@ def train(sess, ops, config):
     while epoch < config.num_epochs:
 
         # draw samples
-        sample_all_categories(sess, ops, config, 3)
+        sample_all_categories(sess, ops, config, 5)
 
         sess.run(iterator.initializer)
 

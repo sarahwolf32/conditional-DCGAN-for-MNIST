@@ -1,3 +1,4 @@
 *.pyc
-summary
-checkpoints
+trainer/summary
+trainer/checkpoints
+trainer/samples
