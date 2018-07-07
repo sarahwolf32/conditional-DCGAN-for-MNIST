@@ -24,15 +24,22 @@ def create_training_ops():
     images_summary_op = tf.summary.image('Generated_Image', generated_images, max_outputs=1)
     summary_op = tf.summary.merge_all()
 
-def expand_labels(labels):
+def one_hot(labels):
     one_hot_labels = np.eye(10)[labels]
     one_hot_labels = np.reshape(one_hot_labels, [-1, 1, 1, 10])
+    return one_hot_labels
+
+def expand_labels(labels):
+    one_hot_labels = one_hot(labels)
     M = one_hot_labels.shape[0]
     expanded_labels = one_hot_labels * np.ones([M, 32, 32, 10])
     return (one_hot_labels, expanded_labels)
 
+def generate_z(M):
+    return np.random.normal(0.0, 1.0, size=[M, 1, 1, 100])
+
 def random_codes(M):
-    z = np.random.normal(0.0, 1.0, size=[M, 1, 1, 100])
+    z = generate_z(M)
     labels = [randint(0, 9) for i in range(M)]
     y, y_expanded = expand_labels(labels)
     return y, y_expanded, z
@@ -48,6 +55,37 @@ def checkpoint_model(checkpoint_dir, session, step, saver):
     model_name = checkpoint_dir + '/model-' + str(step) + '.cptk'
     saver.save(session, model_name, global_step=step)
     print("saved checkpoint!")
+
+def sample_category(sess, ops, config, category, num_samples):
+
+    # prepare for calling generator
+    labels = [category] * num_samples
+    one_hot_labels = one_hot(labels)
+    z = generate_z(num_samples)
+    feed_dict = {
+        'z_holder:0': z,
+        'y_holder:0': one_hot_labels
+    }
+
+    # get images
+    images = sess.run(ops.generated_images, feed_dict=feed_dict)
+    images = images + 1.
+    images = images * 128.
+
+    # write to disk
+    for i in range(images.shape[0]):
+        image = images[i]
+        img_tensor = tf.image.encode_png(image)
+        img_name = config.sample_dir + '/' + str(category) + '_sample_' + str(i) + '.png'
+        output_file = open(img_name, 'wb+')
+        output_data = sess.run(img_tensor)
+        output_file.write(output_data)
+        output_file.close()
+
+def sample_all_categories(sess, ops, config, num_samples):
+    categories = [i for i in range(10)]
+    for category in categories:
+        sample_category(sess, ops, config, category, num_samples)
 
 def train(sess, ops, config):
     writer = tf.summary.FileWriter(config.summary_dir, graph=tf.get_default_graph())
@@ -66,6 +104,10 @@ def train(sess, ops, config):
 
     # loop over epochs
     while epoch < config.num_epochs:
+
+        # draw samples
+        sample_all_categories(sess, ops, config, 3)
+
         sess.run(iterator.initializer)
 
         # loop over batches
