@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from architecture import Architecture
+from dragan import Dragan
 
 class Model:
 
@@ -81,13 +82,13 @@ class Model:
             return output # [M, 1]
 
     # loss
-    def loss(self, Dx, Dg):
+    def loss(self, Dx, Dg, penalty):
         '''
         Dx = Probabilities assigned by D to the real images, [M, 1]
         Dg = Probabilities assigned by D to the generated images, [M, 1]
         '''
         with tf.variable_scope('loss'):
-            loss_d = tf.identity(-tf.reduce_mean(tf.log(Dx) + tf.log(1. - Dg)), name='loss_d')
+            loss_d = tf.identity(-tf.reduce_mean(tf.log(Dx) + tf.log(1. - Dg)) + 10. * penalty, name='loss_d')
             loss_g = tf.identity(-tf.reduce_mean(tf.log(Dg)), name='loss_g')
             return loss_d, loss_g
 
@@ -111,8 +112,16 @@ class Model:
         Dg = self.discriminator(generated_images, y_expanded_holder, weights_init, True)
         Dg = tf.identity(Dg, name="Dg")
 
+        # dragan gradient penalty
+        grad_penalty = Dragan().gradient_penalty(
+            images_holder, 
+            self.discriminator, 
+            y_expanded_holder, 
+            weights_init
+        )
+
         # compute losses
-        loss_d, loss_g = self.loss(Dx, Dg)
+        loss_d, loss_g = self.loss(Dx, Dg, grad_penalty)
 
         # optimizers
         optimizer_g = tf.train.AdamOptimizer(learning_rate=0.0002, beta1=0.5)
