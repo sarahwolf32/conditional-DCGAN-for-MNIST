@@ -95,13 +95,14 @@ class Model:
     def trainers(self):
 
         # placeholders for training data
-        images_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 1], name='images_holder')
-        labels_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 10], name='labels_holder')
+        img_size = Architecture.img_size
+        images_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 1], name='images_holder')
+        labels_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 10], name='labels_holder')
 
         # placeholders for random generator input
         z_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 100], name='z_holder')
         y_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 10], name='y_holder')
-        y_expanded_holder = tf.placeholder(tf.float32, shape=[None, 32, 32, 10], name='y_expanded_holder')
+        y_expanded_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 10], name='y_expanded_holder')
 
         # forward pass
         weights_init = tf.truncated_normal_initializer(stddev=0.02)

@@ -8,6 +8,7 @@ from random import randint
 import os
 from StringIO import StringIO
 from tensorflow.python.lib.io import file_io
+from architecture import Architecture
 
 def create_training_ops():
 
@@ -34,7 +35,8 @@ def one_hot(labels):
 def expand_labels(labels):
     one_hot_labels = one_hot(labels)
     M = one_hot_labels.shape[0]
-    expanded_labels = one_hot_labels * np.ones([M, 32, 32, 10])
+    img_size = Architecture.img_size    
+    expanded_labels = one_hot_labels * np.ones([M, img_size, img_size, 10])
     return (one_hot_labels, expanded_labels)
 
 def generate_z(M):
@@ -171,6 +173,6 @@ def begin_training(config):
 
 # Run
 if __name__ == '__main__':
-    config = TrainConfig(local=False)
+    config = TrainConfig(local=True)
     begin_training(config)
 

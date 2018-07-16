@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from StringIO import StringIO
 from tensorflow.python.lib.io import file_io
+from architecture import Architecture
 
 class DatasetLoader:
 
@@ -40,8 +41,11 @@ class DatasetLoader:
         X = tf.constant(images)
         X = tf.reshape(X, [-1, 28, 28, 1])
 
-        # resize images to 32x32
-        X = tf.image.resize_images(X, [32, 32])
+        # resize images to img_size
+        img_size = Architecture.img_size
+        if img_size == 28:
+            X = tf.image.resize_images(X, [29, 29]) # an awkward way of forcing some type converting
+        X = tf.image.resize_images(X, [img_size, img_size])
 
         # The data is currently in a range [0, 255].
         # Transform data to have a range [-1, 1].

@@ -1,29 +1,25 @@
 
 class Architecture:
 
+    img_size = 28
+
     # Generator layer config
     layers_g = [
         {
             'filters':256,
-            'kernel_size':[4,4],
+            'kernel_size':[7,7],
             'strides':[1,1],
             'padding':'valid'
         },
         {
             'filters':128,
-            'kernel_size':[4,4],
-            'strides':[2,2],
-            'padding':'same'
-        },
-        {
-            'filters':64,
-            'kernel_size':[4,4],
+            'kernel_size':[5,5],
             'strides':[2,2],
             'padding':'same'
         },
         {
             'filters':1,
-            'kernel_size':[4,4],
+            'kernel_size':[5,5],
             'strides':[2,2],
             'padding':'same'
         }
@@ -32,26 +28,20 @@ class Architecture:
     # Discriminator layer config
     layers_d = [
         {
-            'filters': 64,
-            'kernel_size': [4,4],
-            'strides':[2,2],
-            'padding':'same'
-        },
-        {
             'filters': 128,
-            'kernel_size':[4,4],
+            'kernel_size': [5,5],
             'strides':[2,2],
             'padding':'same'
         },
         {
             'filters': 256,
-            'kernel_size':[4,4],
+            'kernel_size':[5,5],
             'strides':[2,2],
             'padding':'same'
         },
         {
             'filters': 1,
-            'kernel_size':[4,4],
+            'kernel_size':[7,7],
             'strides':[1,1],
             'padding':'valid'
         }
