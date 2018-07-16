@@ -6,9 +6,9 @@ This is a generative model for the hand-written digits of the MNIST dataset. It 
 
 In my [last project](https://github.com/sarahwolf32/DCGAN-for-MNIST), I used a DCGAN to generate MNIST digits in an unsupervised fashion - although MNIST is a labeled dataset, I threw away the labels at the beginning and did not use them. This worked, but of course those labels held a great deal of useful information. It would have been nice to allow the GAN to benefit from that additional input, and it would have also been nice to be able to specify which digit I wanted the trained generator to create. 
 
-Conditional GANs tackle both of these shortcomings by feeding the labels into both the Generator and Discriminator. 
+Conditional GANs tackle these shortcomings by feeding the labels into both the Generator and Discriminator. 
 
-[insert diagram here]
+<img src='cGAN_diagram2.png' height="323" width="395">
 
 This has a couple of effects. For example, in the unsupervised DCGAN, the random vector <i>z</i> input controlled everything about the resulting digit - including which digit it was. Since that role is taken over by the labels in a conditional GAN, the <i>z</i> input here encodes all the <i>other</i> features (rotation, style, and so on). 
 
