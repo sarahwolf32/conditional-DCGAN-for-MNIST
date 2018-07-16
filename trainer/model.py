@@ -88,7 +88,7 @@ class Model:
         Dg = Probabilities assigned by D to the generated images, [M, 1]
         '''
         with tf.variable_scope('loss'):
-            loss_d = tf.identity(-tf.reduce_mean(tf.log(Dx) + tf.log(1. - Dg)) + 10. * penalty, name='loss_d')
+            loss_d = tf.identity(-tf.reduce_mean(tf.log(Dx) + tf.log(1. - Dg)) + 2. * penalty, name='loss_d')
             loss_g = tf.identity(-tf.reduce_mean(tf.log(Dg)), name='loss_g')
             return loss_d, loss_g
 

@@ -31,7 +31,6 @@ class Dragan:
 
     def _perturbed_images(self, X):
         '''Add noise to images.'''
-        #rand = np.random.random(X.shape)
         rand = tf.random_uniform([128, 32, 32, 1], 0., 1.)
         diff = self._std(X) * rand
         return X + diff

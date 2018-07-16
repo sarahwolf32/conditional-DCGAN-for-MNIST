@@ -9,7 +9,8 @@ class DatasetLoader:
         images, labels = self._load_data(config)
 
         batch_size = config.batch_size
-        num_batches = int(np.ceil(images.shape[0] / float(batch_size)))
+        num_batches = int(np.floor(images.shape[0] / float(batch_size)))
+
 
         X = self._data_tensor(images)
         dataset = tf.data.Dataset.from_tensor_slices((X, labels))
