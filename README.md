@@ -8,7 +8,7 @@ In my [last project](https://github.com/sarahwolf32/DCGAN-for-MNIST), I used a D
 
 Conditional GANs tackle these shortcomings by feeding the labels into both the Generator and Discriminator. 
 
-<img src='cGAN_diagram2.png' height="323" width="395">
+<img src='cGAN_diagram2.png' height="808" width="989">
 
 This has a couple of effects. For example, in the unsupervised DCGAN, the random vector <i>z</i> input controlled everything about the resulting digit - including which digit it was. Since that role is taken over by the labels in a conditional GAN, the <i>z</i> input here encodes all the <i>other</i> features (rotation, style, and so on). 
 
