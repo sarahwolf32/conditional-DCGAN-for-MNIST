@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from architecture import Architecture
+from architecture import Architecture as Arch
 
 class Model:
 
@@ -14,10 +14,10 @@ class Model:
             # concatenate -> [M, 1, 1, 100 + num_cat]
             layer = tf.concat([z, y], axis=3)
 
-            depth = len(Architecture.layers_g)
+            depth = len(Arch.layers_g)
             for i in range(depth):
 
-                layer_config = Architecture.layers_g[i]
+                layer_config = Arch.layers_g[i]
                 is_output = ((i + 1) == depth)
 
                 conv2d = tf.layers.conv2d_transpose(
@@ -45,17 +45,16 @@ class Model:
 
         # x: an image tensor of shape [M, img_size, img_size, img_channels]
         # y: a one-hot tensor expanded to size [M, img_size, img_size, num_cat]
-        # architecture: a list of dictionaries that specify the config for each layer
 
         with tf.variable_scope('discriminator', reuse=reuse):
 
             # concatenate -> [M, img_size, img_size, 11]
             layer = tf.concat([x, y_expanded], axis=3)
 
-            depth = len(Architecture.layers_d)
+            depth = len(Arch.layers_d)
             for i in range(depth):
 
-                layer_config = Architecture.layers_d[i]
+                layer_config = Arch.layers_d[i]
                 is_input = (i == 0)
                 is_output = ((i + 1) == depth)
 
@@ -94,8 +93,8 @@ class Model:
     # Train
     def trainers(self):
 
-        img_size = Architecture.img_size
-        num_cat = Architecture.num_cat
+        img_size = Arch.img_size
+        num_cat = Arch.num_cat
 
         # placeholders for training data
         images_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 1], name='images_holder')
