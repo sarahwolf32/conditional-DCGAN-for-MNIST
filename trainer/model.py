@@ -6,12 +6,12 @@ class Model:
 
     def generator(self, z, y, initializer):
 
-        # z: a random input tensor of size [M, 1, 1, 100]
+        # z: a random input tensor of size [M, 1, 1, z_size]
         # y: a one-hot label of size [M, 1, 1, num_cat]
 
         with tf.variable_scope('generator'):
 
-            # concatenate -> [M, 1, 1, 100 + num_cat]
+            # concatenate -> [M, 1, 1, z_size + num_cat]
             layer = tf.concat([z, y], axis=3)
 
             depth = len(Arch.layers_g)
@@ -101,7 +101,7 @@ class Model:
         labels_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, num_cat], name='labels_holder')
 
         # placeholders for random generator input
-        z_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 100], name='z_holder')
+        z_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, Arch.z_size], name='z_holder')
         y_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, num_cat], name='y_holder')
         y_expanded_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, num_cat], name='y_expanded_holder')
 

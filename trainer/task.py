@@ -41,7 +41,7 @@ def expand_labels(labels):
     return (one_hot_labels, expanded_labels)
 
 def generate_z(M):
-    return np.random.normal(0.0, 1.0, size=[M, 1, 1, 100])
+    return np.random.normal(0.0, 1.0, size=[M, 1, 1, Arch.z_size])
 
 def random_codes(M):
     z = generate_z(M)
