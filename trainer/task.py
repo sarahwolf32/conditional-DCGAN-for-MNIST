@@ -174,6 +174,6 @@ def begin_training(config):
 
 # Run
 if __name__ == '__main__':
-    config = TrainConfig(local=True)
+    config = TrainConfig(local=False)
     begin_training(config)
 
