@@ -7,11 +7,11 @@ class Model:
     def generator(self, z, y, initializer):
 
         # z: a random input tensor of size [M, 1, 1, 100]
-        # y: a one-hot label of size [M, 1, 1, 10]
+        # y: a one-hot label of size [M, 1, 1, num_cat]
 
         with tf.variable_scope('generator'):
 
-            # concatenate -> [M, 1, 1, 110]
+            # concatenate -> [M, 1, 1, 100 + num_cat]
             layer = tf.concat([z, y], axis=3)
 
             depth = len(Architecture.layers_g)
@@ -44,7 +44,7 @@ class Model:
     def discriminator(self, x, y_expanded, initializer, reuse=False):
 
         # x: an image tensor of shape [M, img_size, img_size, img_channels]
-        # y: a one-hot tensor expanded to size [M, img_size, img_size, 10]
+        # y: a one-hot tensor expanded to size [M, img_size, img_size, num_cat]
         # architecture: a list of dictionaries that specify the config for each layer
 
         with tf.variable_scope('discriminator', reuse=reuse):
@@ -94,15 +94,17 @@ class Model:
     # Train
     def trainers(self):
 
-        # placeholders for training data
         img_size = Architecture.img_size
+        num_cat = Architecture.num_cat
+
+        # placeholders for training data
         images_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 1], name='images_holder')
-        labels_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 10], name='labels_holder')
+        labels_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, num_cat], name='labels_holder')
 
         # placeholders for random generator input
         z_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 100], name='z_holder')
-        y_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, 10], name='y_holder')
-        y_expanded_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, 10], name='y_expanded_holder')
+        y_holder = tf.placeholder(tf.float32, shape=[None, 1, 1, num_cat], name='y_holder')
+        y_expanded_holder = tf.placeholder(tf.float32, shape=[None, img_size, img_size, num_cat], name='y_expanded_holder')
 
         # forward pass
         weights_init = tf.truncated_normal_initializer(stddev=0.02)

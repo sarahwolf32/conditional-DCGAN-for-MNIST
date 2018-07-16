@@ -28,15 +28,16 @@ def create_training_ops():
     summary_op = tf.summary.merge_all()
 
 def one_hot(labels):
-    one_hot_labels = np.eye(10)[labels]
-    one_hot_labels = np.reshape(one_hot_labels, [-1, 1, 1, 10])
+    num_cat = Architecture.num_cat
+    one_hot_labels = np.eye(num_cat)[labels]
+    one_hot_labels = np.reshape(one_hot_labels, [-1, 1, 1, num_cat])
     return one_hot_labels
 
 def expand_labels(labels):
     one_hot_labels = one_hot(labels)
     M = one_hot_labels.shape[0]
     img_size = Architecture.img_size    
-    expanded_labels = one_hot_labels * np.ones([M, img_size, img_size, 10])
+    expanded_labels = one_hot_labels * np.ones([M, img_size, img_size, Architecture.num_cat])
     return (one_hot_labels, expanded_labels)
 
 def generate_z(M):
@@ -90,7 +91,7 @@ def sample_category(sess, ops, config, category, num_samples, sub_dir):
             f.close
 
 def sample_all_categories(sess, ops, config, num_samples, sub_dir):
-    categories = [i for i in range(10)]
+    categories = [i for i in range(Architecture.num_cat)]
     for category in categories:
         sample_category(sess, ops, config, category, num_samples, sub_dir)
 

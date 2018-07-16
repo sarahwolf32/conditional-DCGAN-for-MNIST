@@ -2,6 +2,7 @@
 class Architecture:
 
     img_size = 28
+    num_cat = 10
 
     # Generator layer config
     layers_g = [
