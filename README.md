@@ -1,6 +1,6 @@
 # cDCGAN for MNIST
 
-This is a generative model for the hand-written digits of the MNIST dataset. It combines the DCGAN architecture recommended by ['Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks' (Radford et al)](https://arxiv.org/pdf/1511.06434.pdf) with the inputting of labels suggested in ['Conditional Generative Adversarial Nets' (Mirza)](https://arxiv.org/pdf/1411.1784.pdf).
+This is a generative model for the hand-written digits of the MNIST dataset. It combines the DCGAN architecture recommended by [Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks (Radford et al)](https://arxiv.org/pdf/1511.06434.pdf) with the inputting of labels suggested in [Conditional Generative Adversarial Nets (Mirza)](https://arxiv.org/pdf/1411.1784.pdf).
 
 ## What is a conditional GAN?
 
