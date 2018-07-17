@@ -8,7 +8,7 @@ In my [last project](https://github.com/sarahwolf32/DCGAN-for-MNIST), I used a D
 
 Conditional GANs tackle these shortcomings by feeding the labels into both the Generator and Discriminator. 
 
-<p align="center"><img src='cGAN_diagram2.png' height="461" width="565"></p>
+<p align="center"><img src='readme_images/cGAN_diagram2.png' height="461" width="565"></p>
 
 This has a couple of effects. For example, in the unsupervised DCGAN, the random vector <i>z</i> input controlled everything about the resulting digit - including which digit it was. Since that role is taken over by the labels in a conditional GAN, the <i>z</i> input here encodes all the <i>other</i> features (rotation, style, and so on). 
 
@@ -17,6 +17,10 @@ Feeding in the labels also affected training. I found that the architecture that
 Using fewer layers and larger filters stabilized training. See ```trainer/architecture.py``` for details.
 
 ## Results
+
+Below are four randomly sampled digits from each category (0 - 9):
+
+<img src='readme_images/all_numbers.png' width="800">
 
 ## Trained Model
 
