@@ -32,7 +32,7 @@ To use:
 
 3. Navigate into the project directory, and run ```python -m trainer.task --sample [NUM_SAMPLES_PER_CLASS]```. The results will be saved to the ```trainer/samples``` folder by default.
 
-## Train Your Own (on another dataset)
+## Train Your Own 
 
 If you have a dataset of low resolution, categorically labeled images and want to generate new ones with this code, you should only have to:
 
@@ -40,7 +40,7 @@ If you have a dataset of low resolution, categorically labeled images and want t
 
 2. Edit the ```_load_data``` method in ```trainer/dataset_loader.py``` file to unwrap your dataset and shape it into the given format. 
 
-3. Edit ```trainer/train_config.py``` to set your preferred training configurations (batch size, num epochs, output filepaths, etc.). I have a separate set of defaults for local and remote training, since I tend to train in the cloud, so hopefully this is useful to you as well. Use the ```TrainConfig.is_local = True/False``` property to toggle between local and remote modes.
+3. Edit ```trainer/train_config.py``` to set your preferred training configurations (batch size, num epochs, output filepaths, etc.). I have a separate set of filepath defaults for local and remote training, since I tend to train in the cloud, so hopefully this is useful to you as well. Use the ```TrainConfig.is_local = True/False``` property to toggle between local and remote modes.
 
 I hope this is helpful! 
 
