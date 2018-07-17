@@ -53,9 +53,9 @@ To start training, run ```python -m trainer.task``` from the project directory.
 
 * [Conditional Generative Adversarial Nets](https://arxiv.org/pdf/1411.1784.pdf)
 
-* JiChao Zhang's [Conditional-Gans](https://github.com/zhangqianhui/Conditional-Gans) implementation
+* [JiChao Zhang's Conditional-Gans implementation](https://github.com/zhangqianhui/Conditional-Gans)
 
-* Hyeonwoo Kang's [cGAN vs. cDCGAN](https://github.com/znxlwm/tensorflow-MNIST-cGAN-cDCGAN) implementation
+* [Hyeonwoo Kang's cGAN vs. cDCGAN implementation](https://github.com/znxlwm/tensorflow-MNIST-cGAN-cDCGAN)
 
 
 
