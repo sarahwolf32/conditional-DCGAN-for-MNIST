@@ -13,7 +13,7 @@ class TrainConfig:
             if local:
                 self.DATA_DIR = '/Users/sarahwolf/.keras/datasets/mnist.npz'
                 self.SUMMARY_DIR = 'summary'
-                self.CHECKPOINT_DIR = 'checkpoints'
+                self.CHECKPOINT_DIR = 'MNIST-cDCGAN-model-1'
                 self.SAMPLE_DIR = 'samples'
             else:
                 self.DATA_DIR = 'gs://gan-training-207705_bucket2/mnist.npz'
