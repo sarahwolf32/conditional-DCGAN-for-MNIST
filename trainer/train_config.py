@@ -2,15 +2,17 @@ import argparse
 
 class TrainConfig:
 
+    is_local = True
+
     class Defaults:
         
-        def __init__(self, local):
+        def __init__(self):
             self.NUM_EPOCHS = 13
             self.BATCH_SIZE = 128
             self.LOG_FREQ = 1
             self.CHECKPOINT_FREQ = 25
 
-            if local:
+            if TrainConfig.is_local:
                 self.DATA_DIR = '/Users/sarahwolf/.keras/datasets/mnist.npz'
                 self.SUMMARY_DIR = 'summary'
                 self.CHECKPOINT_DIR = 'MNIST-cDCGAN-model-1'
@@ -21,9 +23,9 @@ class TrainConfig:
                 self.CHECKPOINT_DIR = 'gs://gan-training-207705_bucket2/cDCGAN-1/checkpoints'
                 self.SAMPLE_DIR = 'gs://gan-training-207705_bucket2/cDCGAN-1/samples'
 
-    def __init__(self, local=True):
+    def __init__(self):
         args = self._add_arguments()
-        self._populate_from_args(args, local)
+        self._populate_from_args(args)
 
     def _add_arguments(self):
         parser = argparse.ArgumentParser()
@@ -47,8 +49,8 @@ class TrainConfig:
         args = parser.parse_args()
         return args
 
-    def _populate_from_args(self, args, local):
-        defaults = self.Defaults(local)
+    def _populate_from_args(self, args):
+        defaults = self.Defaults()
 
         self.data_dir = args.data_dir or defaults.DATA_DIR
         self.summary_dir = args.summary_dir or defaults.SUMMARY_DIR
