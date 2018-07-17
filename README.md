@@ -32,6 +32,21 @@ To use:
 
 3. Navigate into the project directory, and run ```python -m trainer.task --sample [NUM_SAMPLES_PER_CLASS]```. The results will be saved to the ```trainer/samples``` folder by default.
 
+## Train Your Own (on another dataset)
+
+If you have a dataset of low resolution, categorically labeled images and want to generate new ones with this code, you should only have to:
+
+1. Edit the ```trainer/architecture.py``` file for your desired input image size, number of label categories, and architecture. DCGANs are very sensitive to architecture, so you may need to try multiple configurations.
+
+2. Edit the ```_load_data``` method in ```trainer/dataset_loader.py``` file to unwrap your dataset and shape it into the given format. 
+
+3. Edit ```trainer/train_config.py``` to set your preferred training configurations (batch size, num epochs, output filepaths, etc.). I have a separate set of defaults for local and remote training, since I tend to train in the cloud, so hopefully this is useful to you as well. Use the ```TrainConfig.is_local = True/False``` property to toggle between local and remote modes.
+
+I hope this is helpful! 
+
+To start training, run ```python -m trainer.task``` from the project directory.
+
+
 ## Acknowledgements
 
 * [Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks](https://arxiv.org/pdf/1511.06434.pdf)
