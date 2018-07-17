@@ -18,6 +18,11 @@ Using fewer layers and larger filters stabilized training. See ```trainer/archit
 
 ## Results
 
+## Trained Model
+
+You can download the trained MNIST model [here](https://storage.googleapis.com/gan-training-207705-public-bucket/MNIST-cDCGAN-model-1.zip).
+
+
 ## Acknowledgements
 
 
