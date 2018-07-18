@@ -95,6 +95,26 @@ def sample_all_categories(sess, ops, config, num_samples, sub_dir):
     for category in categories:
         sample_category(sess, ops, config, category, num_samples, sub_dir)
 
+def load_session(config):
+    sess = tf.Session()
+
+    # load stored graph into current graph
+    graph_filename = str(tf.train.latest_checkpoint(config.checkpoint_dir)) + '.meta'
+    saver = tf.train.import_meta_graph(graph_filename)
+
+    # restore variables into graph
+    saver.restore(sess, tf.train.latest_checkpoint(config.checkpoint_dir))
+        
+    # load operations 
+    ops = TrainOps()
+    ops.populate(sess)
+    return sess, ops
+
+def sample(config):
+    sess, ops = load_session(config)
+    num_samples = int(config.sample)
+    sample_all_categories(sess, ops, config, num_samples, 'all_samples')
+
 def train(sess, ops, config):
     writer = tf.summary.FileWriter(config.summary_dir, graph=tf.get_default_graph())
     saver = tf.train.Saver()
@@ -175,5 +195,8 @@ def begin_training(config):
 # Run
 if __name__ == '__main__':
     config = TrainConfig()
-    begin_training(config)
+    if config.sample > 0:
+        sample(config)
+    else:
+        begin_training(config)
 
