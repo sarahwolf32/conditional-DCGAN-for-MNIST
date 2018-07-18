@@ -191,12 +191,18 @@ def begin_training(config):
     ops.populate(sess)
     train(sess, ops, config)
 
+def continue_training(config):
+    sess, ops = load_session(config)
+    train(sess, ops, config)
+
 
 # Run
 if __name__ == '__main__':
     config = TrainConfig()
     if config.sample > 0:
         sample(config)
+    elif config.should_continue:
+        continue_training(config)
     else:
         begin_training(config)
 
