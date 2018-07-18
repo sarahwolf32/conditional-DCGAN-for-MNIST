@@ -36,7 +36,15 @@ If you want to store the trained model somewhere else, just include ```--checkpo
 
 If you want to output the samples to another location, just include ```--sample-dir [YOUR_PATH]``` in the command.
 
-## Train Your Own 
+## Train Your Own (MNIST)
+
+If you want to tweak this code and train your own version from scratch, you can find the main code in trainer/task.py. To train, you will need to:
+
+1. Download the MNIST data [here](https://storage.googleapis.com/gan-training-207705-public-bucket/mnist.npz).
+2. cd into the project directory
+3. Run ```python -m trainer.task --data-dir [YOUR_PATH_TO_MNIST_DATA]``` to start training.
+
+## Train Your Own (Other Dataset)
 
 If you have a dataset of low resolution, categorically labeled images and want to generate new ones with this code, you should only have to:
 
