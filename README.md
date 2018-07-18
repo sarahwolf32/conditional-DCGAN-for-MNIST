@@ -30,7 +30,11 @@ To use:
 
 2. Unzip it and drag into the project directory.
 
-3. Navigate into the project directory, and run ```python -m trainer.task --sample [NUM_SAMPLES_PER_CLASS]```. The results will be saved to the ```samples``` folder by default.
+3. Navigate into the project directory, and run ```python -m trainer.task --sample [NUM_SAMPLES_PER_CLASS]```. The results will be saved to the ```samples/all_samples``` folder by default.
+
+If you want to store the trained model somewhere else, just include ```--checkpoint-dir [YOUR_PATH]``` in the command.
+
+If you want to output the samples to another location, just include ```--sample-dir [YOUR_PATH]``` in the command.
 
 ## Train Your Own 
 
